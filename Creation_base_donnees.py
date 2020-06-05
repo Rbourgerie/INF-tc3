@@ -2,11 +2,11 @@ import wptools
 import sqlite3
 from zipfile import ZipFile
 import json
+import re
 
 def get_info(country):
-    with ZipFile('{}.zip'.format('europe'),'r') as z:
-        # infobox du pays
-        return json.loads(z.read('{}.json'.format(country)))
+    with ZipFile('europe.zip','r') as z:
+        return json.loads(z.read('{}.json'.format(country)).decode())
 
 def get_name(country):
     info=get_info(country)
