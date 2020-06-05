@@ -69,8 +69,39 @@ def get_leader_name(country):
     print('Impossible de trouver le leader')
     return None
 
-
-
+def get_population(country):
+    info=get_info(country)
+    if country=='Armenia':
+        return('3 021 324')
+    if country=='Denmark':
+        return('5 814 461')
+    if country=='Moldova':
+        return('2 681 735')
+    if country=='Russia':
+        return('146 793 744')
+    if country=='Turkey':
+        return('82 003 882')
+    
+    if 'population_census' in info:
+        population=info["population_census"].replace(',',' ')
+        population=population.split('}} ')
+        if len(population)==1:
+            population[0]=population[0].split(' {{')
+            return population[0][0]
+        return population[1]
+    
+    if 'population_estimate' in info:
+        population=info["population_estimate"].replace(',',' ')
+        population=population.split('}} ')
+        if len(population)==1:
+            population[0]=population[0].split(' {{')
+            return population[0][0]
+        population[1]=population[1].split(' {{')
+        return population[1][0]
+        
+    # En cas d'échec
+    print('Impossible de trouver le nombre d\'habitants')
+    return None
 
 
 
