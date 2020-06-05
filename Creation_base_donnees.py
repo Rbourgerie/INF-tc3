@@ -48,7 +48,9 @@ def get_leader_titre(country):
         m = re.match(".*?\[\[([\w\s',(.)|-]+)\]\]",leader_titre)
         leader_titre=m.group(1)
         
-        return leader_titre
+# On obtient un résultat ressemblant à 'President of France | President'. Or, on souhaite avoir uniquement 'President'. On utilise donc la fonction split pour récupérer cette information.
+        leader_titre=leader_titre.split("|")
+        return leader_titre[1]
     
     # En cas d'échec
     print('Impossible de trouver le leader')
