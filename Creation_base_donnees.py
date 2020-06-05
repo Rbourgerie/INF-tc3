@@ -8,7 +8,7 @@ def get_info(country):
     with ZipFile('europe.zip','r') as z:
         return json.loads(z.read('{}.json'.format(country)).decode())
 
-def get_name(country):
+def get_conventional_name(country):
     info=get_info(country)
     if 'conventional_long_name' in info:
         name=info['conventional_long_name']
@@ -72,32 +72,32 @@ def get_leader_name(country):
 def get_population(country):
     info=get_info(country)
     if country=='Armenia':
-        return('3 021 324')
+        return(3021324)
     if country=='Denmark':
-        return('5 814 461')
+        return(5814461)
     if country=='Moldova':
-        return('2 681 735')
+        return(2681735)
     if country=='Russia':
-        return('146 793 744')
+        return(146793744)
     if country=='Turkey':
-        return('82 003 882')
+        return(82003882)
     
     if 'population_census' in info:
-        population=info["population_census"].replace(',',' ')
+        population=info["population_census"].replace(',','')
         population=population.split('}} ')
         if len(population)==1:
             population[0]=population[0].split(' {{')
-            return population[0][0]
-        return population[1]
+            return int(population[0][0])
+        return int(population[1])
     
     if 'population_estimate' in info:
-        population=info["population_estimate"].replace(',',' ')
+        population=info["population_estimate"].replace(',','')
         population=population.split('}} ')
         if len(population)==1:
             population[0]=population[0].split(' {{')
-            return population[0][0]
+            return int(population[0][0])
         population[1]=population[1].split(' {{')
-        return population[1][0]
+        return int(population[1][0])
         
     # En cas d'échec
     print('Impossible de trouver le nombre d\'habitants')
@@ -195,20 +195,26 @@ def cv_coords(str_coords):
 
 
 
-# 
-# conn = sqlite3.connect('base_donnees.sqlite')
-# 
-# def add_country(conn,country):
-#     # préparation de la commande SQL
-#     c = conn.cursor()
-#     sql = 'INSERT OR REPLACE INTO countries VALUES (?, ?, ?, ?, ?)'
-#     info=get_info(country)
-# 
-#     # les infos à enregistrer
-#     name = get_name(info)
-#     capital = get_capital(info)
-#     coords = get_coords(info)
-# 
-#     # soumission de la commande (noter que le second argument est un tuple)
-#     c.execute(sql,(country, name, capital, coords['lat'],coords['lon']))
-#     conn.commit()
+
+
+
+conn = sqlite3.connect('base_donnees.sqlite')
+
+def add_country(country):
+    # préparation de la commande SQL
+    c = conn.cursor()
+    sql = 'INSERT OR REPLACE INTO countries VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+
+    # les infos à enregistrer
+    conv_name = get_conventional_name(country)
+    leader_t=get_leader_titre(country)
+    leader_n=get_leader_name(country)
+    capital = get_capital(country)
+    pop=get_population(country)
+    currency=get_monnaie(country)
+    coords = get_coords(country)
+    
+
+    # soumission de la commande (noter que le second argument est un tuple)
+    c.execute(sql,(country, conv_name, leader_t, leader_n, capital, pop, currency, coords['lat'],coords['lon']))
+    conn.commit()
