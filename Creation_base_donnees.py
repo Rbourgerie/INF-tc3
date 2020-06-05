@@ -46,7 +46,23 @@ def get_name(country):
     print('Le nom du pays n\'a pas été trouvé')
     return None
 
+# Récupération de la capitale du pays
 
+def get_capital(country):
+    info=get_info(country)
+    if 'capital' in info:
+        capital=info['capital'].replace('\n',' ')
+        
+        # Le nom de la capitale peut comporter des lettres, espaces
+        # ou un des caractères: ',.()|- compris entre crochets [[...]]
+        m = re.match(".*?\[\[([\w\s',(.)|-]+)\]\]",capital)
+        capital=m.group(1)
+        
+        return capital
+    
+    # En cas d'échec
+    print('Impossible de trouver la capitale')
+    return None
 
 
 
