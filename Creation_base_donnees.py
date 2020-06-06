@@ -29,12 +29,11 @@ def get_capital(country):
     info=get_info(country)
     if 'capital' in info:
         capital=info['capital'].replace('\n',' ')
-        
         # Le nom de la capitale peut comporter des lettres, espaces ou un des caractères: ',.()|- compris entre crochets [[...]]
         m = re.match(".*?\[\[([\w\s',(.)|-]+)\]\]",capital)
         capital=m.group(1)
-        
-        return capital
+        capital=capital.split('|')
+        return capital[0]
     
     # En cas d'échec
     print('Impossible de trouver la capitale')
@@ -127,6 +126,8 @@ def get_monnaie(country):
     return None
 
 def get_coords(country):
+    if country=='Liechtenstein':
+        return cv_coords('47|08|N|9|31|E|type:city')
     info=get_info(country)
     if 'coordinates' in info:
         coord=info['coordinates']
@@ -211,22 +212,21 @@ def get_PIB(country):
             return PIB[0]
         return PIB[1]
     
-    # En cas d'échec
-    print('Impossible de  trouver le PIB')
+    # En cas d'échec (ou pour le Vatican, qui n'a pas de PIB)
     return None
 
 def test():
     z=ZipFile('europe.zip','r')
     for filename in z.namelist():
         country=filename.replace('.json','')
-        print(country,get_PIB(country))
+        print(country,get_capital(country))
 
 conn = sqlite3.connect('base_donnees.sqlite')
 
 def add_country(country):
     # préparation de la commande SQL
     c = conn.cursor()
-    sql = 'INSERT OR REPLACE INTO countries VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    sql = 'REPLACE INTO countries VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
 
     # les infos à enregistrer
     conv_name = get_conventional_name(country)
@@ -242,7 +242,12 @@ def add_country(country):
     c.execute(sql,(country, conv_name, leader_t, leader_n, capital, pop, currency, coords['lat'], coords['lon'], PIB))
     conn.commit()
 
-
+def remplir_table():
+    z=ZipFile('europe.zip','r')
+    for filename in z.namelist():
+        country=filename.replace('.json','')
+        add_country(country)
+    return('La table est remplie!')
 
 
 
