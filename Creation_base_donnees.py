@@ -221,32 +221,35 @@ def test():
         country=filename.replace('.json','')
         print(country,get_PIB(country))
 
-
-
-
-
-
-
-
-
-
 conn = sqlite3.connect('base_donnees.sqlite')
 
 def add_country(country):
     # préparation de la commande SQL
     c = conn.cursor()
-    sql = 'INSERT OR REPLACE INTO countries VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    sql = 'INSERT OR REPLACE INTO countries VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
 
     # les infos à enregistrer
     conv_name = get_conventional_name(country)
-    leader_t=get_leader_titre(country)
-    leader_n=get_leader_name(country)
+    leader_t = get_leader_titre(country)
+    leader_n = get_leader_name(country)
     capital = get_capital(country)
-    pop=get_population(country)
-    currency=get_monnaie(country)
+    pop = get_population(country)
+    currency = get_monnaie(country)
     coords = get_coords(country)
-    
+    PIB = get_PIB(country)
 
     # soumission de la commande (noter que le second argument est un tuple)
-    c.execute(sql,(country, conv_name, leader_t, leader_n, capital, pop, currency, coords['lat'],coords['lon']))
+    c.execute(sql,(country, conv_name, leader_t, leader_n, capital, pop, currency, coords['lat'], coords['lon'], PIB))
     conn.commit()
+
+
+
+
+
+
+
+
+
+
+
+
