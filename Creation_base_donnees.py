@@ -49,6 +49,8 @@ def get_leader_titre(country):
         
 # On obtient un résultat ressemblant à 'President of France | President'. Or, on souhaite avoir uniquement 'President'. On utilise donc la fonction split pour récupérer cette information.
         leader_titre=leader_titre.split("|")
+        if len(leader_titre)==1:
+            return leader_titre[0]
         return leader_titre[1]
     
     # En cas d'échec
@@ -56,6 +58,10 @@ def get_leader_titre(country):
     return None
 
 def get_leader_name(country):
+    if country=='Slovenia':
+        return 'Borut Pahor'
+    if country=='United_Kingdom':
+        return 'Elizabeth II'
     info=get_info(country)
     if 'leader_name1' in info:
         leader_name=info['leader_name1'].replace('\n',' ')
@@ -104,6 +110,10 @@ def get_population(country):
     return None
 
 def get_monnaie(country):
+    if country in ['Italy','Slovakia']:
+        return 'Euro'
+    if country=='United_Kingdom':
+        return 'Pound Sterling'
     info=get_info(country)
     if "currency" in info:
         currency=info['currency'].replace('\n',' ')
@@ -192,14 +202,24 @@ def get_PIB(country):
     info=get_info(country)
     if "GDP_nominal" in info:
         PIB=info["GDP_nominal"].replace('&nbsp;',' ')
+        PIB=PIB.replace('{{decrease}} ','')
+        PIB=PIB.replace('{{increase}} ','')
+        PIB=PIB.replace('}}','')
         PIB=PIB.split('|')
         if len(PIB)==1:
+            
             return PIB[0]
         return PIB[1]
     
     # En cas d'échec
     print('Impossible de  trouver le PIB')
     return None
+
+def test():
+    z=ZipFile('europe.zip','r')
+    for filename in z.namelist():
+        country=filename.replace('.json','')
+        print(country,get_PIB(country))
 
 
 
