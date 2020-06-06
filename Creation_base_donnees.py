@@ -30,8 +30,7 @@ def get_capital(country):
     if 'capital' in info:
         capital=info['capital'].replace('\n',' ')
         
-        # Le nom de la capitale peut comporter des lettres, espaces
-        # ou un des caractères: ',.()|- compris entre crochets [[...]]
+        # Le nom de la capitale peut comporter des lettres, espaces ou un des caractères: ',.()|- compris entre crochets [[...]]
         m = re.match(".*?\[\[([\w\s',(.)|-]+)\]\]",capital)
         capital=m.group(1)
         
@@ -63,7 +62,8 @@ def get_leader_name(country):
         m = re.match(".*?\[\[([\w\s',(.)|-]+)\]\]",leader_name)
         leader_name=m.group(1)
         
-        return leader_name
+        leader_name=leader_name.split('|')
+        return leader_name[0]
     
     # En cas d'échec
     print('Impossible de trouver le leader')
@@ -188,6 +188,18 @@ def cv_coords(str_coords):
     # on renvoie un dictionnaire avec les deux valeurs
     return {'lat':lat, 'lon':lon }
 
+def get_PIB(country):
+    info=get_info(country)
+    if "GDP_nominal" in info:
+        PIB=info["GDP_nominal"].replace('&nbsp;',' ')
+        PIB=PIB.split('|')
+        if len(PIB)==1:
+            return PIB[0]
+        return PIB[1]
+    
+    # En cas d'échec
+    print('Impossible de  trouver le PIB')
+    return None
 
 
 
