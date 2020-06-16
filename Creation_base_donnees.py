@@ -217,11 +217,11 @@ def get_PIB(country):
 
 def get_PIB_an(country):
     if country=='Monaco':
-        return('2016')
+        return(2016)
     info=get_info(country)
     if "GDP_nominal_year" in info:
         an=info['GDP_nominal_year']
-        return an
+        return int(an)
     
     # En cas d'échec (ou pour le Vatican, qui n'a pas de PIB)
     return None
@@ -237,7 +237,7 @@ conn = sqlite3.connect('base_donnees.sqlite')
 def add_country(country):
     # préparation de la commande SQL
     c = conn.cursor()
-    sql = 'REPLACE INTO countries VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    sql = 'REPLACE INTO countries VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
 
     # les infos à enregistrer
     conv_name = get_conventional_name(country)
@@ -248,9 +248,10 @@ def add_country(country):
     currency = get_monnaie(country)
     coords = get_coords(country)
     PIB = get_PIB(country)
+    an = get_PIB_an(country)
 
     # soumission de la commande (noter que le second argument est un tuple)
-    c.execute(sql,(country, conv_name, leader_t, leader_n, capital, pop, currency, coords['lat'], coords['lon'], PIB))
+    c.execute(sql,(country, conv_name, leader_t, leader_n, capital, pop, currency, coords['lat'], coords['lon'], PIB, an))
     conn.commit()
 
 def remplir_table():
