@@ -215,11 +215,22 @@ def get_PIB(country):
     # En cas d'échec (ou pour le Vatican, qui n'a pas de PIB)
     return None
 
+def get_PIB_an(country):
+    if country=='Monaco':
+        return('2016')
+    info=get_info(country)
+    if "GDP_nominal_year" in info:
+        an=info['GDP_nominal_year']
+        return an
+    
+    # En cas d'échec (ou pour le Vatican, qui n'a pas de PIB)
+    return None
+
 def test():
     z=ZipFile('europe.zip','r')
     for filename in z.namelist():
         country=filename.replace('.json','')
-        print(country,get_capital(country))
+        print(country,get_PIB_an(country))
 
 conn = sqlite3.connect('base_donnees.sqlite')
 
