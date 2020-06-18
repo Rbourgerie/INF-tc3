@@ -1,6 +1,6 @@
 # Projet/serveur.py
 #
-# Ce serveur correspond à TD3-s7.py amputé de la route /time
+# Ce serveur correspond au serveur final
 #
 import http.server
 import socketserver
@@ -28,6 +28,16 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
     # on récupère les paramètres
     self.init_params()
 
+        # requete location - retourne la liste de lieux et leurs coordonnées géogrpahiques
+    if self.path_info[0] == "location":
+        db_sqlite=self.db_get_countries()
+        self.db=[{**{'id':i},**{key:db_sqlite[i][key] for key in db_sqlite[i].keys()}} for i in range(len(db_sqlite))]
+        self.send_location()
+
+    # requete description - retourne la description du lieu dont on passe l'id en paramètre dans l'URL
+    elif self.path_info[0] == "description":
+        self.send_description()
+ 
     # le chemin d'accès commence par /countries
     if self.path.startswith('/countries'):
       self.send_countries()
@@ -55,9 +65,39 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
   def do_HEAD(self):
     self.send_static()
 
+  # on envoie un contenu encodé en json
+  def send_json(self,data,headers=[]):
+    body = bytes(json.dumps(data),'utf-8') # encodage en json et UTF-8
+    self.send_response(200)
+    self.send_header('Content-Type','application/json')
+    self.send_header('Content-Length',int(len(body)))
+    [self.send_header(*t) for t in headers]
+    self.end_headers()
+    self.wfile.write(body)
+
+
+  def send_location(self):
+      data=[{'id':1,'lat':45.76843,'lon':4.82667,'name':"Rue Couverte"},
+          {'id':2,'lat':45.77128,'lon':4.83251,'name':"Rue Caponi"},
+          {'id':3,'lat':50.78061,'lon':4.83196,'name':"Jardin Rosa-Mir"},
+           {'id':4,'lat':52.78061,'lon':4.83196,'name':"Point test"}]
+      data=[{'id':i,'lat':self.db[i]['latitude'],'lon':self.db[i]['longitude'],'name':self.db[i]['common_name']} for i in range(len(self.db))]
+      self.send_json(data)
+    
+    
+  def send_description(self):
+    data=[{'id':1,'desc':"Il ne faut pas être <b>trop grand</b> pour marcher dans cette rue qui passe sous une maison"},
+            {'id':2,'desc':"Cette rue est <b>si étroite</b> qu'on touche les 2 côtés en tendant les bras !"},
+            {'id':3,'desc':"Ce jardin <b>méconnu</b> évoque le palais idéal du Facteur Cheval"}]
+    for c in data:
+        if c['id'] == int(self.path_info[1]):
+            self.send_json(c)
+            break
+
   #
   # On envoie le document statique demandé
   #
+
   def send_static(self):
 
     # on modifie le chemin d'accès en insérant un répertoire préfixe
@@ -184,18 +224,11 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
   #
   # Récupération de la liste des pays depuis la base
   #
-  def db_get_countries(self,continent=None):
+  def db_get_countries(self):
     c = conn.cursor()
-    sql = 'SELECT wp, capital, latitude, longitude from countries'
+    sql = 'SELECT * from countries'
 
-    # les pays d'un continent
-    if continent:
-      sql += ' WHERE continent LIKE ?'
-      c.execute(sql,('%{}%'.format(continent),))
-
-    # tous les pays de la base
-    else:
-      c.execute(sql)
+    c.execute(sql)
 
     return c.fetchall()
 
@@ -206,7 +239,7 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
   def db_get_country(self,country):
     # préparation de la requête SQL
     c = conn.cursor()
-    sql = 'SELECT * from countries WHERE wp=?'
+    sql = 'SELECT * from countries WHERE common_name=?'
 
     # récupération de l'information (ou pas)
     c.execute(sql,(country,))
@@ -239,7 +272,7 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
 #
 # Ouverture d'une connexion avec la base de données
 #
-conn = sqlite3.connect('pays.sqlite')
+conn = sqlite3.connect('base_donnees.sqlite')
 
 # Pour accéder au résultat des requêtes sous forme d'un dictionnaire
 conn.row_factory = sqlite3.Row
