@@ -30,16 +30,14 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
 
         # requete location - retourne la liste de lieux et leurs coordonnées géogrpahiques
     if self.path_info[0] == "location":
-        db_sqlite=self.db_get_countries()
-        self.db=[{**{'id':i},**{key:db_sqlite[i][key] for key in db_sqlite[i].keys()}} for i in range(len(db_sqlite))]
         self.send_location()
 
     # requete description - retourne la description du lieu dont on passe l'id en paramètre dans l'URL
-    elif self.path_info[0] == "description":
-        self.send_description()
+    elif self.path_info[0] == "description" and len(self.path_info)>1:
+        self.send_description(self.path_info[1])
  
     # le chemin d'accès commence par /countries
-    if self.path.startswith('/countries'):
+    elif self.path.startswith('/countries'):
       self.send_countries()
 
     # le chemin d'accès commence par /country et se poursuit par un nom de pays
@@ -77,22 +75,34 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
 
 
   def send_location(self):
-      data=[{'id':1,'lat':45.76843,'lon':4.82667,'name':"Rue Couverte"},
-          {'id':2,'lat':45.77128,'lon':4.83251,'name':"Rue Caponi"},
-          {'id':3,'lat':50.78061,'lon':4.83196,'name':"Jardin Rosa-Mir"},
-           {'id':4,'lat':52.78061,'lon':4.83196,'name':"Point test"}]
-      data=[{'id':i,'lat':self.db[i]['latitude'],'lon':self.db[i]['longitude'],'name':self.db[i]['common_name']} for i in range(len(self.db))]
+      db_sqlite=self.db_get_countries()
+      self.db=[{**{'id':i},**{key:db_sqlite[i][key] for key in db_sqlite[i].keys()}} for i in range(len(db_sqlite))]
+      data=[{'id':self.db[i]['common_name'],'lat':self.db[i]['latitude'],'lon':self.db[i]['longitude'],'name':self.db[i]['common_name']} for i in range(len(self.db))]
       self.send_json(data)
     
     
-  def send_description(self):
-    data=[{'id':1,'desc':"Il ne faut pas être <b>trop grand</b> pour marcher dans cette rue qui passe sous une maison"},
-            {'id':2,'desc':"Cette rue est <b>si étroite</b> qu'on touche les 2 côtés en tendant les bras !"},
-            {'id':3,'desc':"Ce jardin <b>méconnu</b> évoque le palais idéal du Facteur Cheval"}]
-    for c in data:
-        if c['id'] == int(self.path_info[1]):
-            self.send_json(c)
-            break
+  def send_description(self,country):
+      
+    # on récupère le pays depuis la base de données
+    r = self.db_get_country(country)
+
+    # on n'a pas trouvé le pays demandé
+    if r == None:
+      self.send_error(404,'Country not found')
+
+    # on génère un document au format html
+    else:
+        body = '<ul>'
+        for key in r.keys():
+            if key in {'latitude','longitude'}:
+                body+='<li>{}: {:.3f}</li>'.format(key,r[key])
+            else:
+                body+='<li>{}: {}</li>'.format(key,r[key])
+        body += '</ul>'
+        body += '<audio autoplay loop> <source src="anthem/La_Marseillaise.ogg.mp3" type="audio/mp3"></audio>'
+        # on envoie la réponse
+        headers = [('Content-Type','text/html;charset=utf-8')]
+        self.send(body,headers)
 
   #
   # On envoie le document statique demandé
@@ -231,6 +241,7 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
     c.execute(sql)
 
     return c.fetchall()
+
 
 
   #
