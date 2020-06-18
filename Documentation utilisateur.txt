@@ -3,7 +3,7 @@
 Cette page web a pour but de vous renseigner sur différents pays d'Europe.
 
 Vous trouverez sur cette page une carte interactive de l'Europe.
-En cliquant sur un pays, vous verrez s'afficher le nom de ce pays, ainsi qu'un bandeau sous la carte affichant les informations suivantes :
+En cliquant sur un pays, vous entendrez l'hymne national du pays et vous verrez s'afficher le nom de ce pays, ainsi qu'un bandeau sous la carte donnant les informations suivantes :
 - Le nom usuel et conventionnel du pays
 - Le nom et le titre du dirigeant du pays
 - La capitale
@@ -18,7 +18,7 @@ Noter que toutes les informations de la page sont en anglais.
 
 This web page aims at giving out information on European countries.
 
-On this page, you will find an interactive map of Europe. Clicking on a country will display this country's name, as well as the following list of informations below the map :
+On this page, you will find an interactive map of Europe. Clicking on a country will play the country's national anthem and display this country's name, as well as the following list of informations below the map :
 - The common and conventionnal name
 - The title and name of the country's leader
 - The capital
