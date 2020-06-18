@@ -77,7 +77,7 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
   def send_location(self):
       db_sqlite=self.db_get_countries()
       self.db=[{**{'id':i},**{key:db_sqlite[i][key] for key in db_sqlite[i].keys()}} for i in range(len(db_sqlite))]
-      data=[{'id':self.db[i]['Nom courant'],'lat':self.db[i]['Latitude'],'lon':self.db[i]['Longitude'],'name':self.db[i]['Nom courant']} for i in range(len(self.db))]
+      data=[{'id':self.db[i]['Nom_courant'],'lat':self.db[i]['Latitude'],'lon':self.db[i]['Longitude'],'name':self.db[i]['Nom_courant']} for i in range(len(self.db))]
       self.send_json(data)
     
     
@@ -96,10 +96,12 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
         for key in r.keys():
             if key in {'Latitude','Longitude'}:
                 body+='<li>{}: {:.3f}</li>'.format(key,r[key])
+            elif key=='Nom_courant':
+                body+='<li>{}: {}</li>'.format('Nom courant',r[key])
             else:
                 body+='<li>{}: {}</li>'.format(key,r[key])
         body += '</ul>'
-        body += '<audio autoplay loop> <source src="anthem/La_Marseillaise.ogg.mp3" type="audio/mp3"></audio>'
+        body += '<audio autoplay loop> <source src="anthem/'+r['Nom_courant']+'.mp3" type="audio/mp3"></audio>'
         # on envoie la réponse
         headers = [('Content-Type','text/html;charset=utf-8')]
         self.send(body,headers)
@@ -250,7 +252,7 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
   def db_get_country(self,country):
     # préparation de la requête SQL
     c = conn.cursor()
-    sql = 'SELECT * from countries WHERE common_name=?'
+    sql = 'SELECT * from countries WHERE Nom_courant=?'
 
     # récupération de l'information (ou pas)
     c.execute(sql,(country,))
