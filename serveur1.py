@@ -99,6 +99,7 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
             else:
                 body+='<li>{}: {}</li>'.format(key,r[key])
         body += '</ul>'
+        body += '<audio autoplay loop> <source src="anthem/La_Marseillaise.ogg.mp3" type="audio/mp3"></audio>'
         # on envoie la réponse
         headers = [('Content-Type','text/html;charset=utf-8')]
         self.send(body,headers)
