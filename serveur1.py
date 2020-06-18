@@ -93,6 +93,7 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
     # on génère un document au format html
     else:
         body = '<ul>'
+        body+='<img src="flags/'+r['Nom_courant'].lower()+'.png">'
         for key in r.keys():
             if key in {'Latitude','Longitude'}:
                 body+='<li>{}: {:.3f}</li>'.format(key,r[key])
