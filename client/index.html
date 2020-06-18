@@ -2,7 +2,7 @@
 
 <script src="leaflet.js"> // Bibliothèque Leaflet : http://leafletjs.com/ </script>
 
-<title>carte glissante</title>
+<title>Carte de l'Europe</title>
 <link rel="stylesheet" type="text/css" href="leaflet.css" /> 
 <link rel="stylesheet" type="text/css" href="style.css"/>
 
@@ -28,7 +28,7 @@
 
 // Création d'une carte dans la balise div "map",
 // et position de la vue sur un point donné et un niveau de zoom
-var map = L.map('map').setView([48.85,2.35], 14);
+var map = L.map('map').setView([49.54,15.16], 4.35);
 
 // Ajout d'une couche de dalles OpenStreetMap
 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
@@ -54,7 +54,7 @@ function load_data () {
       // attachement d'une popup, capture de l'événement 'clic'
       // ajout d'une propriété personnalisée au marqueur
       L.marker([data[n].lat,data[n].lon]).addTo(map)
-       .bindPopup('Lieu = '+data[n].name)
+       .bindPopup(data[n].name)
        .addEventListener('click',OnMarkerClick)
        .idnum = data[n].id;
     }
