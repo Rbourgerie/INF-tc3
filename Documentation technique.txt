@@ -35,3 +35,14 @@ ATTENTION: Pour faire tourner ce programme, il est nécessaire d'avoir préalablem
 
 Il y a deux cases vides dans cette table: celles correspondant au PIB et à l'année de calcul du PIB du Vatican, car le Vatican n'a pas de PIB.
 Ce cas particulier mis à part, la table est complète et chaque programme du code python fonctionne pour chaque pays.
+
+
+% Serveur:%
+Le serveur est émulé par le script python serveur1.py sur le port 8080.
+La partie côté client est gèrée par le fichier index.html.
+Les fichiers statiques sont dans le répertoire client.
+Lors du chargement de la page par l'utilisateur, le client charge le fichier leaflet.js qui gèrera l'affichage des POI.
+Le client envoie ensuite une requête GET /location. Le serveur renverra un fichier json contenant pour chaque pays : le nom du pays (clé "nom"), la latitude et la longtiude de sa capitale (clé lat et lon).
+Puis le client ajoute ces POI sur la carte.
+Lors du clique sur un POI le client envoie la requête GET /description/nomdupays. Le serveur renovoie alors un fichier html permettant d'afficher les informations correspondant au pays et de jouer l'hymne national.
+Il peut arriver que le client envoie des requêtes GET pour charger des éléments pour l'affichage (ex : les drapeaux, les fichiers des hymnes). Pour cela, 3 repertoires ont été créés dans le repertoire client : images (contenant les images utilisés dans les fichiers css), flags (contenant les drapeaux des différents pays au format png) et enfin anthem (contenant les hymnes au format mp3)
