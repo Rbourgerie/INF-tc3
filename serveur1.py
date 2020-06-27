@@ -46,8 +46,8 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
       
     # le chemin d'accès commence par /service/countries/...
     elif self.path_info[0] == 'service' and self.path_info[1] == 'countries' and len(self.path_info) > 1:
-      continent = self.path_info[2] if len(self.path_info) > 2 else None
-      self.send_json_countries(continent)
+      
+      self.send_json_countries()
 
     # le chemin d'accès commence par /service/country/...
     elif self.path_info[0] == 'service' and self.path_info[1] == 'country' and len(self.path_info) > 2:
@@ -82,14 +82,13 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
     
     
   def send_description(self,country):
-      
+    print(country)
     # on récupère le pays depuis la base de données
     r = self.db_get_country(country)
-
     # on n'a pas trouvé le pays demandé
     if r == None:
       self.send_error(404,'Country not found')
-
+    
     # on génère un document au format html
     else:
         body = '<ul>'
@@ -99,10 +98,15 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
                 body+='<li>{}: {:.3f}</li>'.format(key,r[key])
             elif key=='Nom_courant':
                 body+='<li>{}: {}</li>'.format('Nom courant',r[key])
-            else:
+            elif key == 'PIB':
+                # Cas particulier du vatican qui n'a pas de PIB
+                if country != 'Vatican City':
+                    body+='<li>{}: {} ({})</li>'.format(key,r[key],r['Année de calcul du PIB'])
+            elif key != 'Année de calcul du PIB':
                 body+='<li>{}: {}</li>'.format(key,r[key])
         body += '</ul>'
         body += '<audio autoplay loop> <source src="anthem/'+r['Nom_courant']+'.mp3" type="audio/mp3"></audio>'
+        body += '</center>'
         # on envoie la réponse
         headers = [('Content-Type','text/html;charset=utf-8')]
         self.send(body,headers)
@@ -153,10 +157,10 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
   #
   # On renvoie la liste des pays avec leurs coordonnées
   #
-  def send_json_countries(self,continent):
+  def send_json_countries(self):
 
     # on récupère la liste de pays depuis la base de données
-    r = self.db_get_countries(continent)
+    r = self.db_get_countries()
 
     # on renvoie une liste de dictionnaires au format JSON
     data = [ {k:a[k] for k in a.keys()} for a in r]
@@ -197,22 +201,25 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
 
     # on génère un document au format html
     else:
-      body = '<!DOCTYPE html>\n<meta charset="utf-8">\n'
-      body += '<title>{}</title>'.format(country)
-      body += '<link rel="stylesheet" href="/TD2-s8.css">'
-      body += '<main>'
-      body += '<h1>{}</h1>'.format(r['name'])
-      body += '<ul>'
-      body += '<li>{}: {}</li>'.format('Continent',r['continent'].capitalize())
-      body += '<li>{}: {}</li>'.format('Capital',r['capital'])
-      body += '<li>{}: {:.3f}</li>'.format('Latitude',r['latitude'])
-      body += '<li>{}: {:.3f}</li>'.format('Longitude',r['longitude'])
-      body += '</ul>'
-      body += '</main>'
-
+        body = '<ul>'
+        body += '<hl'
+        body +='<link rel="stylesheet" href="/style.css">'
+        body
+        body+='<img src="/flags/'+r['Nom_courant']+'.png">'
+        for key in r.keys():
+            if key in {'Latitude','Longitude'}:
+                body+='<li>{}: {:.3f}</li>'.format(key,r[key])
+            elif key=='Nom_courant':
+                body+='<li>{}: {}</li>'.format('Nom courant',r[key])
+            elif key == 'PIB':
+                body+='<li>{}: {} ({})</li>'.format(key,r[key],r['Année de calcul du PIB'])
+            elif key != 'Année de calcul du PIB':
+                body+='<li>{}: {}</li>'.format(key,r[key])
+        body += '</ul>'
+        #body += '<audio autoplay loop> <source src="anthem/'+r['Nom_courant']+'.mp3" type="audio/mp3"></audio>'
       # on envoie la réponse
-      headers = [('Content-Type','text/html;charset=utf-8')]
-      self.send(body,headers)
+    headers = [('Content-Type','text/html;charset=utf-8')]
+    self.send(body,headers)
 
   #
   # On renvoie les informations d'un pays au format json
