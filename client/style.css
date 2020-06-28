@@ -40,4 +40,12 @@ label span { display: inline-block; width: 5em; height: 1.5em; }
 a.delete:hover {
   color: red;
 }
-#map { height: 400px; width: 95%; }
+#map { height: 400px;
+	   margin-left: auto;
+       margin-right: auto; 
+	   width: 95%; }
+
+#description {  margin-left: auto;
+  margin-right: auto;
+  width: 20%;
+text-align: left;}
