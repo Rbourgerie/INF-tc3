@@ -1,6 +1,6 @@
 ﻿/* fond de page */
 body {
-  background-image: linear-gradient(0deg, silver, silver,slategray);
+  background-image: linear-gradient(0deg, silver, silver,#0078A8);
   background-size: 100%;
   background-repeat: no-repeat;
   color: white;
@@ -31,7 +31,7 @@ h1 {
 body > * {}
 
 /* polices de caractères */
-body { font-family: Trebuchet MS, sans-serif; }
+body { font-family: Trebuchet MS, serif; }
 
 /* positionnement des champs */
 label { display: block; }
@@ -40,12 +40,18 @@ label span { display: inline-block; width: 5em; height: 1.5em; }
 a.delete:hover {
   color: red;
 }
-#map { height: 400px;
-	   margin-left: auto;
+#map { height: 550px;
+	   margin-left: 20px;
        margin-right: auto; 
-	   width: 95%; }
+	   width: 70%;
+float:left;	   }
 
 #description {  margin-left: auto;
-  margin-right: auto;
-  width: 20%;
+  margin-right: 20px;
+  width: 410px;
+  margin-top: 10px;
+  float:right;
+  font-size: 20px;
+  color: black;
+  font-family: Gill Sans, sans-serif ;
 text-align: left;}

@@ -18,14 +18,13 @@
 
   <!-- Zone pour l'insertion de la carte OSM via Leaflet -->
  
-  <div id="map" style="margin-bottom:1.33em; "></div>  
+  <div id="map"; "></div>  
 
   <!-- Zone pour l'affichage dynamique des descriptions -->
 
   
   <p id="description"></p>
-  
-  
+  <div style="clear:both"></div>
   
  
   </div>
@@ -36,7 +35,7 @@
 
 // Création d'une carte dans la balise div "map",
 // et position de la vue sur un point donné et un niveau de zoom
-var map = L.map('map').setView([49.54,15.16], 4.2);
+var map = L.map('map').setView([49.54,15.16], 4.4);
 
 // Ajout d'une couche de dalles OpenStreetMap
 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
@@ -95,7 +94,7 @@ function OnMarkerClick (e) {
 
     // affichage dans la zone 'description' du nom (reprise dans le popup)
     // et de la description récupérée par l'appel au serveur
-    description.innerHTML =  '<b><i>' + e.target.getPopup().getContent() + '</i></b><br>'+ this.responseText;
+    description.innerHTML =  '<font size="+6"><p style="color:white;text-shadow: 5px 5px 5px black"><b>' + e.target.getPopup().getContent() + '</b><br></font></b><br>'+ this.responseText;
   };
 
 }

@@ -91,19 +91,19 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
     
     # on génère un document au format html
     else:
-        body = '<ul>'
-        body+='<img src="flags/'+r['Nom_courant']+'.png">'
+        body='<img src="flags/'+r['Nom_courant']+'.png"><br>'
+        body += '<ul>'
         for key in r.keys():
             if key in {'Latitude','Longitude'}:
-                body+='<li>{}: {:.3f}</li>'.format(key,r[key])
+                body+='<li>{}: {:.3f}</li>'.format('<b>'+key+'</b>',r[key])
             elif key=='Nom_courant':
-                body+='<li>{}: {}</li>'.format('Nom courant',r[key])
+                body+='<li>{}: {}</li>'.format('<b>'+'Nom courant'+'</b>',r[key])
             elif key == 'PIB':
                 # Cas particulier du vatican qui n'a pas de PIB
                 if country != 'Vatican City':
-                    body+='<li>{}: {} ({})</li>'.format(key,r[key],r['Année de calcul du PIB'])
+                    body+='<li>{}: {} ({})</li>'.format('<b>'+key+'</b>',r[key],r['Année de calcul du PIB'])
             elif key != 'Année de calcul du PIB':
-                body+='<li>{}: {}</li>'.format(key,r[key])
+                body+='<li>{}: {}</li>'.format('<b>'+key+'</b>',r[key])
         body += '</ul>'
         body += '<audio autoplay loop> <source src="anthem/'+r['Nom_courant']+'.mp3" type="audio/mp3"></audio>'
         body += '</center>'
