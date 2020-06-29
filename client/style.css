@@ -1,10 +1,10 @@
 ﻿/* fond de page */
 body {
-  background-image: linear-gradient(0deg, silver, silver,#0078A8);
+  background-image: linear-gradient(0deg, lightgray,silver 25%,#0078A8);
   background-size: 100%;
   background-repeat: no-repeat;
   color: white;
-  height: 150vh;
+  height: 780px;
   margin: 0;
   /* pour éviter l'ascenseur */
   border: 1px solid transparent;
